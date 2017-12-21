@@ -1,0 +1,14 @@
+.column{
+  display: inline-block;
+}
+
+.cell{
+  width: 30px;
+  height: 30px;
+  background-color: #000000;
+  margin: 2px;
+}
+
+.cell.full{
+  background-color: #731987;
+}
