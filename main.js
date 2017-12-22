@@ -20,6 +20,7 @@ class Column {
     for (var i = 0; i < 10; i++) {
       this.cells.push(new Cell(columnID, i));
     }
+    
     //event listener for each column, i need to figure out a way to make this
     //depend on the player's turn
     document.getElementById(columnID).addEventListener('click', ()=>{
@@ -61,6 +62,7 @@ class Column {
   }
 
   addToken(){
+
     let index = this.indexOfLastEmptyCell();
     if(index>=0 && index<=9){
       this.cells[index].addToken();
@@ -136,6 +138,8 @@ class Board{
   }
 
   addColumns(){
+    //taken from constructor and turned into new method when i was having problems with
+    //event listener/scope
     for (var i = 0; i < 10; i++) {
       this.columns.push(new Column(i, this.checkforWin));
       console.log('added')
