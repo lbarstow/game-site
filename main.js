@@ -2,10 +2,12 @@ let gameBoard;
 
 function init() {
    gameBoard = new Board();
+   gameBoard.addColumns();
 }
 
+
 class Column {
-  constructor(id) {
+  constructor(id, clicker) {
     let columnID = `column-${id}`
     let columnDiv = document.createElement('div');
     columnDiv.setAttribute('class', 'column');
@@ -18,13 +20,15 @@ class Column {
     for (var i = 0; i < 10; i++) {
       this.cells.push(new Cell(columnID, i));
     }
-    //event listener for each column, i need to figure otu a way to make this
+    //event listener for each column, i need to figure out a way to make this
     //depend on the player's turn
     document.getElementById(columnID).addEventListener('click', ()=>{
-      this.addToken();
+      let val = this.addToken();
+      clicker(val);
     });
   }
-  
+
+
   indexOfLastEmptyCell(){
     let index = 9;
     while (index>=0){
@@ -52,7 +56,6 @@ class Column {
       if(runLength >= 4){
         return token;
       }
-
     }
     return null;
   }
@@ -63,16 +66,8 @@ class Column {
       this.cells[index].addToken();
       console.log(this.checkForRun());
     }
-    // else{
-    //   document.getElementById(this.id).removeEventListener('click', ()=>{
-    //     this.addToken();
-    //   });
-    //   //if full remove click listener?
-    // }
-
-    //should i retru
+    return index;
   }
-
 }
 
 class Cell {
@@ -101,16 +96,59 @@ class Cell {
 }
 
 class Board{
+  //game as well?
   constructor(){
+    this.name= "hi"
     let boardDiv = document.createElement('div');
     boardDiv.setAttribute('class', 'board');
     let body = document.getElementsByTagName('body')[0];
     body.appendChild(boardDiv);
     this.columns = [];
+    // this.columns = [];
+    // for (var i = 0; i < 10; i++) {
+    //   this.columns.push(new Column(i, this.checkforWin));
+    // }
+    this.checkforWin = this.checkforWin.bind(this)
+  }
+  checkforWin(row){
+    console.log(row);
+    let token = "";
+    let runLength = 1;
     for (var i = 0; i < 10; i++) {
-      this.columns.push(new Column(i));
+      let cellEntry = this.columns[i].cells[row]
+      if((cellEntry.mark == token) && (token != "")){
+        runLength += 1;
+
+      }else{
+        token = cellEntry.mark;
+        runLength = 1;
+      }
+      if(runLength >= 4){
+        console.log("RUN");
+        return token;
+
+      }
+    }
+    console.log("no run")
+    return null;
+
+
+  }
+
+  addColumns(){
+    for (var i = 0; i < 10; i++) {
+      this.columns.push(new Column(i, this.checkforWin));
+      console.log('added')
     }
   }
+
+  //monitor events should be shut on and off to alternate between turns
+
 }
 
+
+class Game{
+  //represents one round of the gameBoard
+  //should keep track of turns
+}
 //how do i run a game?
