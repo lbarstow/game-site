@@ -34,3 +34,9 @@ class Board{
 
   }
 }
+
+class Banana{
+  constructor(){
+    this.fruit = "yep"
+  }
+}
