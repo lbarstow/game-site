@@ -9,6 +9,10 @@
   margin: 2px;
 }
 
-.cell.full{
-  background-color: #731987;
+.cell.first{
+  background-color: #0FE5E0;
+}
+
+.cell.second{
+  background-color: #32CD32;
 }

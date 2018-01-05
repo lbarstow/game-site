@@ -1,7 +1,10 @@
 
+
 let init= () => {
    gameBoard = new Board();
+
 }
+
 
 class Column {
   constructor(id, clicker) {
@@ -15,11 +18,13 @@ class Column {
     //this.id will give the id of html element attached to column
     this.id = columnID
     this.cells = [];
+    console.log(columnID)
     for (var i = 0; i < 10; i++) {
       this.cells.push(new Cell(columnID, i));
     }
     //used to track the index of the available cell the next token will be added to
     this.openIndex = 9;
+    console.log(columnID)
 
     //event listener for each column, i need to figure out a way to make this
     //depend on the player's turn
