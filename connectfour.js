@@ -1,17 +1,22 @@
-let board = [];
-let currentPlayer = "first"
+let board;
+let currentPlayer;
 
 let init= () => {
-   //gameBoard = new Board();
    buildColumns();
-
 }
 
 let buildColumns= () => {
+  board = [];
+  currentPlayer = "first";
+  let body = document.getElementsByTagName('body')[0];
+  let playerSpan = document.createElement('h1');
+  playerSpan.setAttribute('class', 'player');
+  playerSpan.setAttribute('id', 'player_span');
+  playerSpan.innerHTML = "Player One's Turn"
+  body.appendChild(playerSpan);
 
   let boardDiv = document.createElement('div');
   boardDiv.setAttribute('class', 'board');
-  let body = document.getElementsByTagName('body')[0];
   body.appendChild(boardDiv);
 
   for (var i = 0; i < 10; i++) {
@@ -19,21 +24,67 @@ let buildColumns= () => {
   }
 }
 let swap = () =>{
-  //swaps turns
+  //swaps turns by changing the value of currentPlayer
+  let playerSpan = document.getElementById('player_span');
   if (currentPlayer === "first"){
     currentPlayer = "second";
+    playerSpan.innerHTML = "Player Two's Turn"
   }else{
     currentPlayer = "first";
+    playerSpan.innerHTML = "Player One's Turn"
   }
 }
 function onColumnClick(event) {
   //console.log(event.target.id)
-  let columnIndex = event.currentTarget.getAttribute("index");
-  board[columnIndex].addToken(currentPlayer)
-  console.log(event.currentTarget.getAttribute("index"))
+  let columnX = parseInt(event.currentTarget.getAttribute("index"));
+  let rowY = board[columnX].addToken(currentPlayer)
+
+  findStreak(columnX, rowY);
   swap();
-  //check for win here
-  //change player
+}
+let findStreak = (row, column) =>{
+  //would recursion be faster?
+  let longestStreak = 1;
+  let search = true;
+  let streak = 1;
+
+  let right = countAdjacent(row, column, 1, 0, 0);
+  let left = countAdjacent(row, column, -1, 0, 0)
+  let horizontal = 1 + left + right;
+
+  let up = countAdjacent(row, column, 0, -1, 0);
+  let down = countAdjacent(row, column, 0, 1, 0)
+  let vertical = 1 + up + down;
+
+  let upL = countAdjacent(row, column, -1, -1, 0);
+  let downL = countAdjacent(row, column, 1, -1, 0);
+  let upR = countAdjacent(row, column, -1, 1, 0);
+  let downR = countAdjacent(row, column, 1, 1, 0);
+  let forwardDiag = 1 + upR + downL;
+  let backDiag = 1 + upL + downR;
+
+
+  console.log(`horizontal ${horizontal}`);
+  console.log(`vertical ${vertical}`);
+  console.log(`forwardDiag ${forwardDiag}`);
+  console.log(`backDiag ${backDiag}`);
+
+}
+//take in initial x and initial y and the x offset and y offset
+let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
+
+  let x = xIndex + xChange;
+  let y = yIndex + yChange;
+  let nextLength = length + 1;
+
+  if (x < 0 || x > 9 || y < 0 || y > 9){
+    //console.log("out of range")
+    return length;
+  } else if (!(board[x].cells[y].mark === currentPlayer)) {
+    //console.log("no match")
+    return length;
+  }
+  return countAdjacent(x, y, xChange, yChange, nextLength);
 }
 
 //have on click return twp numbers showing column and row
@@ -47,6 +98,7 @@ function onColumnClick(event) {
 let hi = () =>{
   console.log("hi")
 }
+
 function Cell(columnNumber, index) {
 
     let idString = `${columnNumber}-${index}`;
@@ -70,28 +122,7 @@ function Cell(columnNumber, index) {
     }
   }
 }
-// class Cell {
-//   constructor(columnNumber, index){
-//     let idString = `${columnNumber}-${index}`;
-//     let cellDiv = document.createElement('div');
-//     cellDiv.setAttribute('class', 'cell');
-//     cellDiv.setAttribute('id', idString);
-//     let columnDiv = document.getElementById(columnNumber);
-//     columnDiv.appendChild(cellDiv);
-//     this.full = false;
-//     this.mark = "";
-//     this.id = idString;
-//   }
-//   //find way to take in parameter that indicated which player
-//   addToken(){
-//     this.full = true;
-//     this.mark = "h";
-//     let cellDiv = document.getElementById(this.id);
-//     if (!cellDiv.className.includes("full")){
-//       cellDiv.className = cellDiv.className + " full";
-//     }
-//   }
-// }
+
 
 class Column {
   constructor(id) {
@@ -111,11 +142,6 @@ class Column {
     }
     //used to track the index of the available cell the next token will be added to
     this.openIndex = 9;
-
-    //event listener for each column, i need to figure out a way to make this
-    //depend on the player's turn
-    //calls addToken
-    //returns cell index of token added to board check for win method
     document.getElementById(columnID).addEventListener('click', onColumnClick)
 
   }
@@ -156,49 +182,3 @@ class Column {
     return index;
   }
 }
-
-
-class Board{
-  //game as well?
-  //add turns
-  constructor(){
-    this.name= "hi"
-    let boardDiv = document.createElement('div');
-    boardDiv.setAttribute('class', 'board');
-    let body = document.getElementsByTagName('body')[0];
-    body.appendChild(boardDiv);
-    this.columns = [];
-
-    this.checkforWin = this.checkforWin.bind(this);
-    for (var i = 0; i < 10; i++) {
-      this.columns.push(new Column(i, this.checkforWin));
-    }
-  }
-  checkforWin(row){
-    // this will be a function that checks for vertical and horizontal wins in the board
-    //console.log(row);
-    if(row >= 0 && row<=9){
-      let token = "";
-      let runLength = 1;
-      for (var i = 0; i < 10; i++) {
-        let cellEntry = this.columns[i].cells[row]
-        if((cellEntry.mark == token) && (token != "")){
-          runLength += 1;
-
-        }else{
-          token = cellEntry.mark;
-          runLength = 1;
-        }
-        if(runLength >= 4){
-          //logic to win goes here
-          //console.log("HORIZONTAL WIN!");
-          return token;
-        }
-      }
-    }
-    //console.log("no run")
-    return null;
-  }
-  //monitor events should be shut on and off to alternate between turns
-}
-//setInterval(hi, 100)
