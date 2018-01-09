@@ -16,7 +16,7 @@ let onClick = (event) =>{
   let xIndex = Math.floor(x/100);
   let yIndex = Math.floor(y/100);
   if(cells[yIndex][xIndex]!==null ){
-    console.log("full click")
+    console.log("full click");
     return;
   }
   cells[yIndex][xIndex]= mark;
@@ -29,13 +29,12 @@ let onClick = (event) =>{
     checkForWin(xIndex, yIndex);
     mark = "x";
   }
-  autoMove();
+  //UNCOMMENT FOLLOWING LINE TO PLAY AGAINST THE COMPUTER
+  //autoMove();
 };
 
 let autoMove = () =>{
-  //first check if computer can win
-  //check if oponent can win
-  // inefficient
+  //does not prioritize self win over blocking move
   let mostSame = 0;
   let bestX = 0;
   let bestY = 0;
@@ -56,8 +55,6 @@ let autoMove = () =>{
   drawO(bestY, bestX);
   checkForWin(bestY, bestX);
   mark = "x";
-  console.log(cells)
-
 };
 
 let countAdjacent =(x, y) =>{
@@ -79,9 +76,37 @@ let countAdjacent =(x, y) =>{
       verticalO +=1;
     }
   }
+  let xTotal = horizontalX + verticalX + onDiagonal(x, y, "x");
+  let oTotal = horizontalO + verticalO + onDiagonal(x, y, "o");
+  return Math.max(xTotal, oTotal);
+};
 
-
-  return Math.max((horizontalO + verticalO), (horizontalX + verticalX));
+let onDiagonal = (x, y, symbol) => {
+  //tests if coordinates lie on the returns count
+  let count = 0;
+  if((x === 0 && y=== 0) || (x === 1 && y=== 1) || (x === 2 && y=== 2)){
+    if (symbol === cells[0][0]){
+      count += 1;
+    }
+    if(symbol === cells[1][1]){
+      count += 1;
+    }
+    if(symbol === cells[2][2]){
+      count +=1;
+    }
+  }
+  if((x === 2 && y=== 0) || (x === 1 && y=== 1) || (x === 0 && y=== 2)){
+    if (symbol === cells[2][0]){
+      count += 1;
+    }
+    if(symbol === cells[1][1]){
+      count += 1;
+    }
+    if(symbol === cells[0][2]){
+      count +=1;
+    }
+  }
+  return count;
 };
 
 let checkForWin = (x, y) =>{
@@ -153,6 +178,5 @@ let reset = () => {
   let canvas = document.getElementById('tic_canvas');
   let body = document.getElementsByTagName('body')[0];
   body.removeChild(canvas);
-
   init();
 };
