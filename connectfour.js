@@ -3,7 +3,8 @@ let currentPlayer;
 
 let init = () => {
    buildColumns();
-}
+};
+
 let reset = () =>{
   let body = document.getElementsByTagName('body')[0];
   let playerSpan = document.getElementsByTagName('h1')[0];
@@ -11,7 +12,7 @@ let reset = () =>{
   body.removeChild(playerSpan);
   body.removeChild(boardDiv);
   buildColumns();
-}
+};
 
 let buildColumns= () => {
   board = [];
@@ -20,7 +21,7 @@ let buildColumns= () => {
   let playerSpan = document.createElement('h1');
   playerSpan.setAttribute('class', 'player');
   playerSpan.setAttribute('id', 'player_span');
-  playerSpan.innerHTML = "Player One's Turn"
+  playerSpan.innerHTML = "Player One's Turn";
   body.appendChild(playerSpan);
 
   let boardDiv = document.createElement('div');
@@ -30,18 +31,18 @@ let buildColumns= () => {
   for (var i = 0; i < 10; i++) {
     board.push(new Column(i));
   }
-}
+};
 let nextTurn = () =>{
   //swaps turns by changing the value of currentPlayer
   let playerSpan = document.getElementById('player_span');
   if (currentPlayer === "first"){
     currentPlayer = "second";
-    playerSpan.innerHTML = "Player Two's Turn"
+    playerSpan.innerHTML = "Player Two's Turn";
   }else{
     currentPlayer = "first";
-    playerSpan.innerHTML = "Player One's Turn"
+    playerSpan.innerHTML = "Player One's Turn";
   }
-}
+};
 
 function onColumnClick(event) {
   //console.log(event.target.id)
@@ -57,11 +58,11 @@ let findStreak = (row, column) =>{
   let streak = 1;
 
   let right = countAdjacent(row, column, 1, 0, 0);
-  let left = countAdjacent(row, column, -1, 0, 0)
+  let left = countAdjacent(row, column, -1, 0, 0);
   let horizontal = 1 + left + right;
 
   let up = countAdjacent(row, column, 0, -1, 0);
-  let down = countAdjacent(row, column, 0, 1, 0)
+  let down = countAdjacent(row, column, 0, 1, 0);
   let vertical = 1 + up + down;
 
   let upL = countAdjacent(row, column, -1, -1, 0);
@@ -71,7 +72,7 @@ let findStreak = (row, column) =>{
   let forwardDiag = 1 + upR + downL;
   let backDiag = 1 + upL + downR;
   return Math.max(horizontal, vertical, forwardDiag, backDiag);
-}
+};
 
 let  handleWin = (streak) =>{
   if( streak >= 4 ){
@@ -82,14 +83,14 @@ let  handleWin = (streak) =>{
       //and event listener that isnt there
       board[i].removeClick();
     }
-    console.log("win")
+    console.log("win");
 
   }
   else{
     nextTurn();
   }
 
-}
+};
 
 //take in initial x and initial y and the x offset and y offset, and length of string
 let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
@@ -100,17 +101,17 @@ let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
   if (x < 0 || x > 9 || y < 0 || y > 9){
     //console.log("out of range")
     return length;
-  } else if (!(board[x].cells[y].mark === currentPlayer)) {
+  } else if (board[x].cells[y].mark !== currentPlayer) {
     //console.log("no match")
     return length;
   }
   return countAdjacent(x, y, xChange, yChange, nextLength);
-}
+};
 
 
 let hi = () =>{
-  console.log("hi")
-}
+  console.log("hi");
+};
 
 function Cell(columnNumber, index) {
   let idString = `${columnNumber}-${index}`;
@@ -131,13 +132,13 @@ function Cell(columnNumber, index) {
     if (!cellDiv.className.includes(token)){
       cellDiv.className = cellDiv.className + ` ${token}`;
     }
-  }
+  };
 }
 
 class Column {
   constructor(id) {
     //makes one column of ten cells. addEventListener for column div on click
-    let columnID = `column-${id}`
+    let columnID = `column-${id}`;
     let columnDiv = document.createElement('div');
     columnDiv.setAttribute('class', 'column');
     columnDiv.setAttribute('id', columnID);
@@ -145,17 +146,17 @@ class Column {
     let boardDiv = document.getElementsByClassName('board')[0];
     boardDiv.appendChild(columnDiv);
     //this.id will give the id of html element attached to column
-    this.id = columnID
+    this.id = columnID;
     this.cells = [];
     for (var i = 0; i < 10; i++) {
       this.cells.push(new Cell(columnID, i));
     }
     //used to track the index of the available cell the next token will be added to
     this.openIndex = 9;
-    document.getElementById(columnID).addEventListener('click', onColumnClick)
+    document.getElementById(columnID).addEventListener('click', onColumnClick);
   }
   removeClick(){
-    document.getElementById(this.id).removeEventListener('click', onColumnClick)
+    document.getElementById(this.id).removeEventListener('click', onColumnClick);
   }
 
 
@@ -165,10 +166,10 @@ class Column {
       this.cells[index].addToken(player);
       this.openIndex = index - 1;
     } else{
-      console.log("you can't add it here")
+      console.log("you can't add it here");
     }
     if(index === 0 ){
-      document.getElementById(this.id).removeEventListener('click', onColumnClick)
+      document.getElementById(this.id).removeEventListener('click', onColumnClick);
     }
     //using index so i know where to check gives index where token was added
     return index;

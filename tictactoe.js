@@ -1,5 +1,4 @@
 let cells;
-
 let mark;
 
 let init = () => {
@@ -8,7 +7,7 @@ let init = () => {
             [null, null, null]];
   mark = "x";
   drawCanvas();
-}
+};
 
 let onClick = (event) =>{
   let rect = event.currentTarget.getBoundingClientRect();
@@ -17,6 +16,7 @@ let onClick = (event) =>{
   let xIndex = Math.floor(x/100);
   let yIndex = Math.floor(y/100);
   if(cells[yIndex][xIndex]!==null ){
+    console.log("full click")
     return;
   }
   cells[yIndex][xIndex]= mark;
@@ -29,23 +29,76 @@ let onClick = (event) =>{
     checkForWin(xIndex, yIndex);
     mark = "x";
   }
-}
+  autoMove();
+};
+
+let autoMove = () =>{
+  //first check if computer can win
+  //check if oponent can win
+  // inefficient
+  let mostSame = 0;
+  let bestX = 0;
+  let bestY = 0;
+  for (var x = 0; x < 3; x++) {
+    for (var y = 0; y < 3; y++) {
+      if(cells[x][y] === null){
+        let count = countAdjacent(x, y);
+        if(count >= mostSame){
+          mostSame = count;
+          bestX = x;
+          bestY = y;
+        }
+      }
+    }
+  }
+  console.log(mostSame);
+  cells[bestX][bestY]= mark;
+  drawO(bestY, bestX);
+  checkForWin(bestY, bestX);
+  mark = "x";
+  console.log(cells)
+
+};
+
+let countAdjacent =(x, y) =>{
+  let horizontalX = 0;
+  let verticalX =0;
+  let horizontalO = 0;
+  let verticalO =0;
+  for (var i = 0; i < 3; i++) {
+    //console.log("entered");
+    if (cells[x][i] === "x"){
+      horizontalX += 1;
+    }else if (cells[x][i] === "o") {
+      horizontalO += 1;
+    }
+    if(cells[i][y] === "x"){
+      verticalX +=1;
+
+    }else if (cells[i][y] === "o") {
+      verticalO +=1;
+    }
+  }
+
+
+  return Math.max((horizontalO + verticalO), (horizontalX + verticalX));
+};
 
 let checkForWin = (x, y) =>{
   //used else if because, while multiple branches could occur, it's only necessary for one to be
   if(cells[0][x] === mark && cells[1][x] === mark && cells[2][x] === mark){
-    console.log("first")
+    alert(`${mark} won`);
   }
   else if (cells[y][0] === mark && cells[y][1] === mark && cells[y][2] === mark){
-    console.log("second")
+    alert(`${mark} won`);
   }
   else if(cells[0][0] === mark && cells[1][1] === mark && cells[2][2] === mark){
-    console.log("third")
+    alert(`${mark} won`);
   }
   else if(cells[2][0] === mark && cells[1][1] === mark && cells[0][2] === mark){
-    console.log("fourth")
+    alert(`${mark} won`);
   }
-}
+};
 
 let drawO = (x, y) =>{
   let startX = x * 100 + 50;
@@ -55,20 +108,20 @@ let drawO = (x, y) =>{
   context.beginPath();
   context.arc(startX, startY, 40,0,2*Math.PI);
   context.stroke();
-}
-let drawX = (x, y) =>{
+};
+
+let drawX = (x, y) => {
   let startX = x * 100 + 5;
   let startY = y * 100 + 5;
   let canvas = document.getElementById('tic_canvas');
   let context = canvas.getContext('2d');
-  //context.lineWidth = 5;
   context.moveTo(startX, startY);
   context.lineTo(startX + 90, startY+ 90);
   context.stroke();
   context.moveTo(startX, startY +90);
   context.lineTo(startX + 90, startY);
   context.stroke();
-}
+};
 
 let drawCanvas = () =>{
   let body = document.getElementsByTagName('body')[0];
@@ -94,14 +147,12 @@ let drawCanvas = () =>{
   context.moveTo(0, 200);
   context.lineTo(300, 200);
   context.stroke();
-}
+};
 
 let reset = () => {
   let canvas = document.getElementById('tic_canvas');
   let body = document.getElementsByTagName('body')[0];
   body.removeChild(canvas);
 
-
-
   init();
-}
+};
