@@ -1,7 +1,7 @@
 let board;
 let currentPlayer;
 
-let init= () => {
+let init = () => {
    buildColumns();
 }
 let reset = () =>{
