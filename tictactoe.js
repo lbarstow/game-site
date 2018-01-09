@@ -1,4 +1,6 @@
-let cells = [[null, null, null], [null, null, null], [null, null, null]];
+let cells = [[null, null, null],
+            [null, null, null],
+            [null, null, null]];
 let mark = "x";
 
 let init = () => {
@@ -12,9 +14,55 @@ let onClick = (event) =>{
   let y = event.clientY - rect.top;
   let xIndex = Math.floor(x/100);
   let yIndex = Math.floor(y/100);
+  if(cells[yIndex][xIndex]!==null ){
+    return;
+  }
+
   cells[yIndex][xIndex]= mark;
-  console.log(rect);
-  console.log(cells);
+  if(mark === "x"){
+    drawX(xIndex, yIndex);
+  }else{
+    drawO(xIndex, yIndex);
+  }
+}
+let drawO = (x, y) =>{
+  let startX = x * 100 + 50;
+  let startY = y * 100 + 50;
+  let canvas = document.getElementById('tic_canvas');
+  let context = canvas.getContext('2d');
+  context.beginPath();
+  context.arc(startX, startY, 40,0,2*Math.PI);
+  context.stroke();
+  if(cells[0][x] === mark && cells[1][x] === mark && cells[2][x] === mark){
+    console.log("win")
+  }
+  if(cells[y][0] === mark && cells[y][1] === mark && cells[y][2] === mark){
+    console.log("win")
+  }
+  mark = "x";
+
+
+}
+let drawX = (x, y) =>{
+  let startX = x * 100 + 5;
+  let startY = y * 100 + 5;
+  let canvas = document.getElementById('tic_canvas');
+  let context = canvas.getContext('2d');
+  //context.lineWidth = 5;
+  context.moveTo(startX, startY);
+  context.lineTo(startX + 90, startY+ 90);
+  context.stroke();
+  context.moveTo(startX, startY +90);
+  context.lineTo(startX + 90, startY);
+  context.stroke();
+  if(cells[0][x] === mark && cells[1][x] === mark && cells[2][x] === mark){
+    console.log("win")
+  }
+  if(cells[y][0] === mark && cells[y][1] === mark && cells[y][2] === mark){
+    console.log("win")
+  }
+  //context.lineWidth = 1;
+  mark = "o";
 }
 
 let drawCanvas = () =>{
@@ -27,7 +75,7 @@ let drawCanvas = () =>{
   body.appendChild(canvas);
   let context = canvas.getContext('2d');
   context.fillStyle = "#F2F9FC";
-  context.lineWidth = 5;
+  //draws grid on canvas
   context.fillRect(0, 0, canvas.getAttribute("width"), canvas.getAttribute("height"));
   context.moveTo(100, 0);
   context.lineTo(100, 300);
@@ -44,5 +92,9 @@ let drawCanvas = () =>{
 }
 
 let reset = () => {
-  console.log("reset");
+  let canvas = document.getElementById('tic_canvas');
+  let body = document.getElementsByTagName('body')[0];
+  body.removeChild(canvas)
+
+  init();
 }
