@@ -23,7 +23,7 @@ let buildColumns= () => {
     board.push(new Column(i));
   }
 }
-let swap = () =>{
+let nextTurn = () =>{
   //swaps turns by changing the value of currentPlayer
   let playerSpan = document.getElementById('player_span');
   if (currentPlayer === "first"){
@@ -34,16 +34,16 @@ let swap = () =>{
     playerSpan.innerHTML = "Player One's Turn"
   }
 }
+
 function onColumnClick(event) {
   //console.log(event.target.id)
   let columnX = parseInt(event.currentTarget.getAttribute("index"));
-  let rowY = board[columnX].addToken(currentPlayer)
-
-  findStreak(columnX, rowY);
-  swap();
+  let rowY = board[columnX].addToken(currentPlayer);
+  handleWin(findStreak(columnX, rowY));
 }
+
 let findStreak = (row, column) =>{
-  //would recursion be faster?
+  // finds the length of all runs connected to the cell at the coordinates given
   let longestStreak = 1;
   let search = true;
   let streak = 1;
@@ -62,17 +62,29 @@ let findStreak = (row, column) =>{
   let downR = countAdjacent(row, column, 1, 1, 0);
   let forwardDiag = 1 + upR + downL;
   let backDiag = 1 + upL + downR;
+  return Math.max(horizontal, vertical, forwardDiag, backDiag);
+}
 
+let  handleWin = (streak) =>{
+  if( streak >= 4 ){
+    let playerSpan = document.getElementById('player_span');
+    playerSpan.innerHTML = `Game Over ${currentPlayer} won`;
+    for (var i = 0; i < board.length; i++) {
+      //i checked and it appears that there is no problem with removing
+      //and event listener that isnt there
+      board[i].removeClick();
+    }
+    console.log("win")
 
-  console.log(`horizontal ${horizontal}`);
-  console.log(`vertical ${vertical}`);
-  console.log(`forwardDiag ${forwardDiag}`);
-  console.log(`backDiag ${backDiag}`);
+  }
+  else{
+    nextTurn();
+  }
 
 }
-//take in initial x and initial y and the x offset and y offset
-let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
 
+//take in initial x and initial y and the x offset and y offset, and length of string
+let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
   let x = xIndex + xChange;
   let y = yIndex + yChange;
   let nextLength = length + 1;
@@ -87,42 +99,32 @@ let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
   return countAdjacent(x, y, xChange, yChange, nextLength);
 }
 
-//have on click return twp numbers showing column and row
-//use recursion check if it matches adjacent the and return the longest streak in each direction
-// function Column(){
-//
-// }
-// function Celly(){
-//
-// }
+
 let hi = () =>{
   console.log("hi")
 }
 
 function Cell(columnNumber, index) {
-
-    let idString = `${columnNumber}-${index}`;
-    let cellDiv = document.createElement('div');
-    cellDiv.setAttribute('class', 'cell');
-    cellDiv.setAttribute('id', idString);
-    let columnDiv = document.getElementById(columnNumber);
-    columnDiv.appendChild(cellDiv);
-    this.full = false;
-    this.mark = "";
-    this.id = idString;
+  let idString = `${columnNumber}-${index}`;
+  let cellDiv = document.createElement('div');
+  cellDiv.setAttribute('class', 'cell');
+  cellDiv.setAttribute('id', idString);
+  let columnDiv = document.getElementById(columnNumber);
+  columnDiv.appendChild(cellDiv);
+  this.full = false;
+  this.mark = "";
+  this.id = idString;
 
   //find way to take in parameter that indicated which player
   this.addToken= function(token){
     this.full = true;
     this.mark = token;
-
     let cellDiv = document.getElementById(this.id);
     if (!cellDiv.className.includes(token)){
       cellDiv.className = cellDiv.className + ` ${token}`;
     }
   }
 }
-
 
 class Column {
   constructor(id) {
@@ -143,34 +145,16 @@ class Column {
     //used to track the index of the available cell the next token will be added to
     this.openIndex = 9;
     document.getElementById(columnID).addEventListener('click', onColumnClick)
-
+  }
+  removeClick(){
+    document.getElementById(this.id).removeEventListener('click', onColumnClick)
   }
 
-  checkForRun(){
-    let token = "";
-    let runLength = 1;
-    for (var i = 0; i < 10; i++) {
-      let cellEntry = this.cells[i]
-      if((cellEntry.mark == token) && (token != "")){
-        runLength += 1;
-      }else{
-        token = cellEntry.mark;
-        runLength = 1;
-      }
-      if(runLength >= 4){
-        //console.log("VERTICAL WIN!")
-        return token;
-      }
-    }
-    return null;
-  }
 
   addToken(player){
     let index = this.openIndex;
     if(index>=0 && index<=9){
       this.cells[index].addToken(player);
-      //need to have logic if win actually happens
-      //console.log(this.checkForRun());
       this.openIndex = index - 1;
     } else{
       console.log("you can't add it here")
