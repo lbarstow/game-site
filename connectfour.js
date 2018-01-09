@@ -4,6 +4,14 @@ let currentPlayer;
 let init= () => {
    buildColumns();
 }
+let reset = () =>{
+  let body = document.getElementsByTagName('body')[0];
+  let playerSpan = document.getElementsByTagName('h1')[0];
+  let boardDiv = document.getElementsByClassName('board')[0];
+  body.removeChild(playerSpan);
+  body.removeChild(boardDiv);
+  buildColumns();
+}
 
 let buildColumns= () => {
   board = [];
