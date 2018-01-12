@@ -3,11 +3,16 @@
 <html>
 <head>
   <title>connect four</title>
-  <link href="index.css" rel="stylesheet">
+  <link href="puzzle.css" rel="stylesheet">
   <script type ='text/javascript' src='puzzle.js'></script>
 </head>
 <body onload="init();">
-  <canvas id="puzzle_canvas"></canvas>
-  <button >New Game</button>
+  <canvas id="puzzle"></canvas>
+
+  <input type="radio" name="widthbutton" value="3" checked="true">3 X 3</input>
+  <input type="radio" name="widthbutton" value="4">4 X 4</input>
+  <input type="radio" name="widthbutton" value="5">5 X 5</input>
+  <button  onclick= "begin();">Start Your Puzzle</button>
+
 </body>
 </html>

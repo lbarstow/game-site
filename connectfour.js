@@ -108,7 +108,6 @@ let countAdjacent = (xIndex, yIndex, xChange, yChange, length) => {
   return countAdjacent(x, y, xChange, yChange, nextLength);
 };
 
-
 let hi = () =>{
   console.log("hi");
 };
@@ -158,7 +157,6 @@ class Column {
   removeClick(){
     document.getElementById(this.id).removeEventListener('click', onColumnClick);
   }
-
 
   addToken(player){
     let index = this.openIndex;

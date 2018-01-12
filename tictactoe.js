@@ -132,7 +132,10 @@ let drawO = (x, y) =>{
   let context = canvas.getContext('2d');
   context.beginPath();
   context.arc(startX, startY, 40,0,2*Math.PI);
+  context.lineWidth = 10;
+  context.strokeStyle = "#125BD1"
   context.stroke();
+  context.restore();
 };
 
 let drawX = (x, y) => {
@@ -140,12 +143,19 @@ let drawX = (x, y) => {
   let startY = y * 100 + 5;
   let canvas = document.getElementById('tic_canvas');
   let context = canvas.getContext('2d');
+  context.beginPath();
   context.moveTo(startX, startY);
   context.lineTo(startX + 90, startY+ 90);
+  context.lineWidth = 10;
+  context.strokeStyle = "#000000"
   context.stroke();
+
+  context.beginPath();
   context.moveTo(startX, startY +90);
   context.lineTo(startX + 90, startY);
+  context.lineWidth = 10;
   context.stroke();
+  context.restore();
 };
 
 let drawCanvas = () =>{
@@ -159,19 +169,27 @@ let drawCanvas = () =>{
   let context = canvas.getContext('2d');
   context.fillStyle = "#F2F9FC";
   //draws grid on canvas
+  context.lineWidth = 1;
+
+  //context.save();
   context.fillRect(0, 0, canvas.getAttribute("width"), canvas.getAttribute("height"));
+  context.beginPath()
   context.moveTo(100, 0);
   context.lineTo(100, 300);
   context.stroke();
+  context.beginPath()
   context.moveTo(200, 0);
   context.lineTo(200, 300);
   context.stroke();
+  context.beginPath()
   context.moveTo(0, 100);
   context.lineTo(300, 100);
   context.stroke();
+  context.beginPath()
   context.moveTo(0, 200);
   context.lineTo(300, 200);
   context.stroke();
+  context.save();
 };
 
 let reset = () => {
